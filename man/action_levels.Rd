@@ -37,13 +37,6 @@ HDL is reversed (`1 - hdl_percentile`) since lower HDL values are riskier.
 df <- data.frame(waist_percentile = c(0.85, 0.96))
 action_levels(df)
 
-df <- data.frame(
-  hdl_percentile = c(0.1,0.5),
-  homa_percentile = c(0.4,0.9),
-  trg_percentile = c(0.6,0.5),
-  waist_percentile = c(0.9,0.99),
-  sbp_percentile = c(0.8,0.01)
-)
 action_levels(df)
 
 }

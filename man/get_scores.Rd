@@ -34,13 +34,6 @@ Computes age-, sex- and (for `sbp` and `dbp`) height-specific percentiles or z-s
 using IDEFICS study reference data.
 }
 \examples{
-get_scores(
-  variable = "waist",
-  sex = "f",
-  age = c(5, 6),
-  values = c(50, 52),
-  return_values = "z.score"
-)
 
 get_scores(
   variable="dbp",
