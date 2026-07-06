@@ -1,3 +1,5 @@
+#' @import gamlss
+
 utils::globalVariables(c("mu", "sigma", "nu", "tau"))
 
 #devtools::use_data(diamonds, overwrite = TRUE)
