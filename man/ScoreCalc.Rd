@@ -30,17 +30,6 @@ The function iteratively applies `get_scores()` to each recognized variable in t
 If `"MetS"` is requested, a Metabolic Syndrome score is computed and optionally transformed to percentiles/z-scores.
 }
 \examples{
-df <- data.frame(
-  sex = c("f", "m"),
-  age = c(6, 7),
-  height = c(120, 125),
-  waist = c(55, 60),
-  homa = c(1.2, 1.4),
-  sbp = c(100, 105),
-  dbp = c(65, 70),
-  trg = c(0.9, 1.0),
-  hdl = c(1.1, 1.0)
-)
-ScoreCalc(df, return_values = c("z.score", "MetS"))
+ScoreCalc(df, return_values = c("percentile", "action"))
 
 }
