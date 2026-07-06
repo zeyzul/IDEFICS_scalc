@@ -1,4 +1,4 @@
-#' @import gamlss
+#' @import gamlss.dist
 
 utils::globalVariables(c("mu", "sigma", "nu", "tau"))
 
