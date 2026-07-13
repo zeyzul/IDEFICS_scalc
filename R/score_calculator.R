@@ -381,7 +381,10 @@ action_levels <- function(df, lvl_name=c("none","monit","action"), perc_level=c(
               # which of the levels 1, 2, 3 are exceeded/reached at least 3 times
               levelcheck_123 <- apply(compare_with_123, 1, function(x) sum(x, na.rm=T)>=3)
               # return maximum level that is reached or exceeded at least three times
-              max((1:(length(perc_level)+1))[levelcheck_123]) #max(ordered(1:(length(perc_level)+1), 1:(length(perc_level)+1), lvl_name)[levelcheck_123])
+              levs <- (1:(length(perc_level)+1))[levelcheck_123]
+
+              if (length(levs) == 0) NA_integer_ else max(levs)
+
             })
     rs$overall.action <- ordered(rs$overall.action, 1:(length(perc_level)+1), lvl_name)
   }
