@@ -11,9 +11,10 @@ sex_cats <- c("boys", "girls")
 var_names <- c("bmi", "dbp", "glu", "hdl", "height", "homa", "insu", "MetS_shifted", "sbp", "trg", "waist", "crp")
 par_cats <- c("cutoffp1", "mu", "sigma", "nu", "tau")
 
-#' 2D Interpolation Function Constructor
-#'
-#' Creates a closure that performs 2D interpolation over a grid using pracma::interp2.
+
+
+#' @title 2D Interpolation Function Constructor
+#' @description Creates a closure that performs 2D interpolation over a grid using pracma::interp2.
 #'
 #' @param x Numeric vector. Grid values along the x-axis.
 #' @param y Numeric vector. Grid values along the y-axis.
@@ -38,10 +39,13 @@ approxfun2 <- function(x, y, Z, method = "linear") {
   }
 }
 
+
+
+
 # vector for the distributions per variable
 var_distribution <- list()
 
-# fitsplines for each parameter, variable and sex
+# fit splines for each parameter, variable and sex
 approx_param_functions <- list()
 for (sex in sex_cats) {
   for (vname in var_names) {
@@ -68,9 +72,11 @@ for (sex in sex_cats) {
   }
 }
 
-#' Create a Sex- and Age-Specific Interpolation Function
+
+
+#' @title Create a Sex- and Age-Specific Interpolation Function
 #'
-#' Constructs a closure that returns interpolated values based on sex and age.
+#' @description Constructs a closure that returns interpolated values based on sex and age.
 #' Internally selects from precomputed interpolation functions.
 #'
 #' @param vname Character. Variable name (e.g., "bmi", "waist").
@@ -90,9 +96,9 @@ mkfun_sex_age <- function(vname, param) {
   }
 }
 
-#' Create a Sex-, Age-, and Height-Specific Interpolation Function
+#' @title Create a Sex-, Age-, and Height-Specific Interpolation Function
 #'
-#' Constructs a closure for interpolating values that depend on sex, age, and height.
+#' @description Constructs a closure for interpolating values that depend on sex, age, and height
 #' Chooses appropriate internal spline function based on `vname` and `param`.
 #'
 #' @param vname Character. Variable name (e.g., "bmi", "waist").
@@ -110,6 +116,7 @@ mkfun_sex_age_height <- function(vname, param) {
     )
   }
 }
+
 
 for (vname in var_names) {
   all_cols <- lapply(sex_cats, function(x) colnames(get(paste("par", vname, x, sep="_"), envir= internal_env)))
@@ -138,9 +145,15 @@ for (vname in var_names) {
 #approx_param_functions$bmi_sigma(c("f","m"),c(5,5))
 
 
-#' Function to calculate percentiles from the hurdle model
+#' @title Percentile calculator for the hurdle model
+#'
+#' @description
+#'
 #' @param y Numeric vector. Observed values of the variable to score.
-#' @param p1 cutoff percentile from the logistic model
+#' @param p1 Numeric vector. First part of the hurdle model, representing the cutoff percentile from the logistic model.
+#'
+#' @return A numeric vector representing the calculated percentile based on the hurdle model
+#' @keywords internal
 p_hurdle <- function(y, p1, mu, sigma, nu, tau) {
 
   p <- p1 + (1 - p1) * pGB1(y,
@@ -154,14 +167,18 @@ p_hurdle <- function(y, p1, mu, sigma, nu, tau) {
   p
 }
 
-#' Calculate IDEFICS Scores for Children
+
+
+
+
+#' @title Calculate Scores for Children and Young Adults
 #'
-#' Computes age-, sex- and (for `sbp` and `dbp`) height-specific percentiles or z-scores for anthropometric and metabolic variables
-#' using IDEFICS study reference data.
+#' @description Computes age-, sex- and (for `sbp` and `dbp`) height-specific percentiles or z-scores for anthropometric and metabolic variable
+#' using IDEFICS study reference data and Biomarkers4Pediatrics collaboration (for `crp`).
 #'
-#' @param variable Character. The variable to assess. Must be one of the supported variables ("waist", "bmi", "hdl", "sbp", "dbp", "trg", "homa", "glu", "height" or "insu").
+#' @param variable Character. The variable to assess. Must be one of the supported variables ("waist", "bmi", "hdl", "sbp", "dbp", "trg", "homa", "glu", "height","insu", or "crp").
 #' @param sex Character vector. Same length as `age`, `height`, and `values`. Accepts "f" for female or "m" for male.
-#' @param age Numeric vector. Ages of the children in years.
+#' @param age Numeric vector. Ages of the children in years. Must be between 1 and 22 for `crp`, and between 2 and 11 otherwise.
 #' @param height Numeric vector or NULL. Required for height-dependent models (`sbp` and `dbp`). Defaults to NULL.
 #' @param values Numeric vector. Observed values of the variable to score.
 #' @param return_values Character vector. Specifies which outputs to return. Options include "percentile", "z.score".
@@ -169,12 +186,12 @@ p_hurdle <- function(y, p1, mu, sigma, nu, tau) {
 #' @return A named list containing the requested scores. Each element is a numeric vector of the same length as `values`.
 #'
 #' @examples
-# get_scores(
-#   variable = "crp",
-#   sex = c("f","f"),
-#   age = c(3, 12),
-#   values = c(4, 0.5)
-# )
+#' get_scores(
+#'   variable = "crp",
+#'   sex = c("f","f"),
+#'   age = c(3, 12),
+#'   values = c(4, 0.5)
+#'   )
 #'
 #' get_scores(
 #'   variable="dbp",
@@ -182,7 +199,7 @@ p_hurdle <- function(y, p1, mu, sigma, nu, tau) {
 #'   age=c(5,5),
 #'   height=c(120,110),
 #'   values=c(70,60)
-#' )
+#'   )
 #'
 #' @export
 get_scores <- function(variable="waist", sex=c("f","m"), age=6:5, height=NULL, values=c(20,21), return_values=c("percentile","z.score"))  {
@@ -257,9 +274,12 @@ get_scores <- function(variable="waist", sex=c("f","m"), age=6:5, height=NULL, v
   return(rs)
 }
 
-#' Calculate Metabolic Syndrome (MetS) Score
+
+
+
+#' @title Calculate Metabolic Syndrome (MetS) Score
 #'
-#' Computes a composite MetS score from standardized z-scores of metabolic indicators.
+#' @description Computes a composite MetS score from standardized z-scores of metabolic indicators.
 #'
 #' @param df A data frame containing the following columns: `waist_z.score`, `homa_z.score`, `sbp_z.score`, `dbp_z.score`, `trg_z.score`, and `hdl_z.score`.
 #'           These are expected to be numeric vectors representing z-scores.
@@ -291,9 +311,10 @@ MetSScore <- function(df) {
   return(MetS)
 }
 
-#' Compute IDEFICS Action Levels
+#' @title Compute Action Levels
 #'
-#' Assigns monitoring or intervention levels based on variable percentiles using standard IDEFICS thresholds.
+#' @description Assigns monitoring or intervention levels based on variable percentiles using B4P thresholds for `crp` and standard IDEFICS thresholds
+#' for all other variables.
 #'
 #' @param df A data frame containing percentile columns such as `waist_percentile`, `sbp_percentile`, `hdl_percentile`, etc.
 #' @param lvl_name Character vector of level labels. Defaults to `c("none", "monit", "action")`.
@@ -338,7 +359,7 @@ action_levels <- function(df, lvl_name=c("none","monit","action"), perc_level=c(
 
   crp_perc_to_actlev <- function(perc, sex) {
 
-    cutoffs <- ifelse(sex == "m", 0.935, 0.899)
+    cutoffs <- ifelse(sex == "m", 0.935, 0.899) # hard-coded sex-specific cutoffs
 
     ordered(
       ifelse(perc > cutoffs, "Elevated", "Not elevated"),
@@ -396,12 +417,16 @@ action_levels <- function(df, lvl_name=c("none","monit","action"), perc_level=c(
   return(as.data.frame(rs))
 }
 
-#' Compute IDEFICS Scores for Multiple Variables
+
+
+
+
+#' @title  Compute IDEFICS and B4P Scores for Multiple Variables
 #'
-#' Applies `get_scores()` to multiple anthropometric and metabolic variables in a data frame and optionally returns MetS and action levels.
+#' @description Applies `get_scores()` to multiple anthropometric and metabolic variables in a data frame and optionally returns MetS and action levels.
 #'
 #' @param df A data frame with columns: `sex`, `age`, `height`, and observed values for any of the supported variables:
-#'           `bmi`, `glu`, `hdl`, `height`, `homa`, `insu`, `trg`, `waist`, `sbp`, `dbp`. Values for `height` are only required for `sbp` and `dbp`.
+#'           `bmi`, `glu`, `hdl`, `height`, `homa`, `insu`, `trg`, `waist`, `sbp`, `dbp`, `crp`. Values for `height` are only required for `sbp` and `dbp`.
 #' @param return_input Logical. If `TRUE`, includes original input columns in the result. Defaults to `FALSE`.
 #' @param return_values Character vector. Specifies which scores to compute. Options include `"percentile"`, `"z.score"`, `"MetS"`, and `"action"`.
 #'
@@ -413,23 +438,26 @@ action_levels <- function(df, lvl_name=c("none","monit","action"), perc_level=c(
 #' If `"MetS"` is requested, a Metabolic Syndrome score is computed and optionally transformed to percentiles/z-scores.
 #'
 #' @examples
-# df <- data.frame(
-#   sex = c("f", "m"),
-#   age = c(15, 7),
-#   height = c(120, 125),
-#   waist = c(55, 60),
-#   homa = c(1.2, 1.4),
-#   sbp = c(100, 105),
-#   dbp = c(65, 70),
-#   crp = c(6, 3),
-#   trg = c(0.9, 1.0),
-#   hdl = c(1.1, 1.0)
-# )
-# df <- data.frame(
-#   sex = c("f", "m"),
-#   age = c(15, 7),
-#   crp = c(6, 2)
-# )
+#' df <- data.frame(
+#'   sex = c("f", "m"),
+#'   age = c(8, 15),
+#'   height = c(120, 125),
+#'   waist = c(55, 60),
+#'   homa = c(1.2, 1.4),
+#'   sbp = c(100, 105),
+#'   dbp = c(65, 70),
+#'   trg = c(0.9, 1.0),
+#'   crp = c(6, 2),
+#'   trg = c(0.9, 1.0),
+#'   hdl = c(1.1, 1.0)
+#'   )
+#'
+#' df <- data.frame(
+#'   sex = c("f", "m"),
+#'   age = c(15, 7),
+#'   crp = c(6, 2)
+#'   )
+#'
 #' ScoreCalc(df, return_values = c("percentile", "action"))
 #'
 #' @export

@@ -1,6 +1,6 @@
 Package: IDEFICS.scalc
 Type: Package
-Title: Scoring Tools for Anthropometric and Metabolic Parameters in Children
+Title: Scoring Tools for Anthropometric and Metabolic Parameters in Children and Young Adults
 Version: 0.1.0
 Authors@R: c(
     person(
@@ -14,9 +14,9 @@ Authors@R: c(
       )
   )
 Description: Provides tools to compute standardized percentiles and z-scores for anthropometric
-    and metabolic parameters in children, based on age-, sex-, and height-specific reference data
-    from the IDEFICS study. Supports computation of a composite Metabolic Syndrome (MetS) score
-    and associated action levels for child health monitoring.
+    and metabolic parameters in children and young adults, based on age-, sex-, and height-specific reference data
+    from the IDEFICS study and Biomarkers4Pediatrics collaboration. Supports computation of a composite Metabolic Syndrome (MetS) score
+    and associated action levels for health monitoring.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
