@@ -7,7 +7,11 @@ Authors@R: c(
       "Andreas", "Mändle",
       email = "maendle@leibniz-bips.de",
       role = c("aut", "cre")
-    )
+    ),
+    person(
+      "Zülal", "Bekerecioglu",
+      role = c("ctb")
+      )
   )
 Description: Provides tools to compute standardized percentiles and z-scores for anthropometric
     and metabolic parameters in children, based on age-, sex-, and height-specific reference data
